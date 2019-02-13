@@ -142,7 +142,7 @@ class eZPaypalGateway extends eZRedirectGateway
         $paypalINI = eZINI::instance('paypal.ini');
         $parameter = $paypalINI->variable('PaypalSettings', $parameterKey);
 
-        if (class_exists('OCPaymentRecipient')) {
+        if (class_exists('OCPaymentRecipient') && in_array('ocpaymentrecipient', eZExtension::activeExtensions())) {
             $paymentRecipientAvailableParameters = eZINI::instance('payment_recipient.ini')->variable('ParametersSettings', 'AvailableParameters');
             if (isset($paymentRecipientAvailableParameters[$parameterKey])){
                 foreach ($order->productItems() as $product){
