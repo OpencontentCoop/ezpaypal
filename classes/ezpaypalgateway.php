@@ -63,7 +63,6 @@ class eZPaypalGateway extends eZRedirectGateway
 
         $paypalServer = $paypalINI->variable('ServerSettings', 'ServerName');
         $requestURI = $paypalINI->variable('ServerSettings', 'RequestURI');
-        $business = urlencode($paypalINI->variable('PaypalSettings', 'Business'));
 
         $processParams = $process->attribute('parameter_list');
         $orderID = $processParams['order_id'];
@@ -72,6 +71,7 @@ class eZPaypalGateway extends eZRedirectGateway
         $localHost = eZSys::serverURL();
         $localURI = eZSys::serverVariable('REQUEST_URI');
 
+        /** @var eZOrder $order */
         $order = eZOrder::fetch($orderID);
         $amount = urlencode($order->attribute('total_inc_vat'));
         $currency = urlencode($order->currencyCode());
@@ -80,7 +80,8 @@ class eZPaypalGateway extends eZRedirectGateway
 
         $countryCode = urlencode($locale->countryCode());
 
-        $maxDescLen = $paypalINI->variable('PaypalSettings', 'MaxDescriptionLength');
+        $business = urlencode($this->getParameter($order, 'Business'));
+        $maxDescLen = $this->getParameter($order, 'MaxDescriptionLength');
         $itemName = urlencode($this->createShortDescription($order, $maxDescLen));
 
         $accountInfo = $order->attribute('account_information');
@@ -90,11 +91,11 @@ class eZPaypalGateway extends eZRedirectGateway
         $zip = urlencode($accountInfo['zip']);
         $state = urlencode($accountInfo['state']);
         $place = urlencode($accountInfo['place']);
-        $image_url = "$localHost" . urlencode($paypalINI->variable('PaypalSettings', 'LogoURI'));
-        $background = urlencode($paypalINI->variable('PaypalSettings', 'BackgroundColor'));
-        $pageStyle = urlencode($paypalINI->variable('PaypalSettings', 'PageStyle'));
-        $noNote = urlencode($paypalINI->variable('PaypalSettings', 'NoNote'));
-        $noteLabel = ($noNote == 1) ? '' : urlencode($paypalINI->variable('PaypalSettings', 'NoteLabel'));
+        $image_url = "$localHost" . urlencode($this->getParameter($order, 'LogoURI'));
+        $background = urlencode($this->getParameter($order, 'BackgroundColor'));
+        $pageStyle = urlencode($this->getParameter($order, 'PageStyle'));
+        $noNote = urlencode($this->getParameter($order, 'NoNote'));
+        $noteLabel = ($noNote == 1) ? '' : urlencode($this->getParameter($order, 'NoteLabel'));
         $noShipping = 1;
 
         $url = $paypalServer . $requestURI .
@@ -134,6 +135,31 @@ class eZPaypalGateway extends eZRedirectGateway
         $this->logger->writeTimedString("cancel_return  = $localHost" . $indexDir . "/shop/basket/");
 
         return $url;
+    }
+
+    private function getParameter(eZOrder $order, $parameterKey)
+    {
+        $paypalINI = eZINI::instance('paypal.ini');
+        $parameter = $paypalINI->variable('PaypalSettings', $parameterKey);
+
+        if (class_exists('OCPaymentRecipient')) {
+            $paymentRecipientAvailableParameters = eZINI::instance('payment_recipient.ini')->variable('ParametersSettings', 'AvailableParameters');
+            if (isset($paymentRecipientAvailableParameters[$parameterKey])){
+                foreach ($order->productItems() as $product){
+                    /** @var eZContentObject $productObject */
+                    $productObject = $product['item_object']->attribute('contentobject');
+                    $productPaymentRecipient = eZPaymentRecipientType::getPaymentRecipientFromContentObject($productObject);
+                    if ($productPaymentRecipient instanceof OCPaymentRecipient){
+                        if ($productPaymentRecipient->hasParameter($parameterKey)){
+                            $parameter = $productPaymentRecipient->getParameter($parameterKey);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $parameter;
     }
 }
 
