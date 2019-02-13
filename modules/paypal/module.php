@@ -26,18 +26,9 @@
 // ## END COPYRIGHT, LICENSE AND WARRANTY NOTICE ##
 //
 
-$Module = array( "name" => "eZPaypal" );
+$Module = array("name" => "eZPaypal");
 
 $ViewList = array();
 $ViewList["notify_url"] = array(
-    "script" => "notify_url.php" );
-
-$ViewList["test"] = array(
-    "functions" => array( 'test' ),
-    "script" => "test.php",
-    "unordered_params" => array(),
-    "params" => array('')
+    "script" => "notify_url.php"
 );
-
-$FunctionList['test'] = array();
-?>
