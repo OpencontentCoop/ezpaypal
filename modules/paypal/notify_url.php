@@ -31,29 +31,22 @@
 /*! \file notify_url.php
 */
 
-include_once( 'extension/ezpaypal/classes/ezpaypalchecker.php');
+$logger = eZPaymentLogger::CreateForAdd('var/log/eZPaypal_notify_url.log');
+$checker = new eZPaypalChecker('paypal.ini');
 
-$logger  = eZPaymentLogger::CreateForAdd('var/log/eZPaypal_notify_url.log');
-$checker = new eZPaypalChecker( 'paypal.ini' );
-
-if( $checker->createDataFromPOST() )
-{
-  unset ($_POST);
-  if( $checker->requestValidation() && $checker->checkPaymentStatus() )
-  {
-      $orderID = $checker->getFieldValue( 'custom' );
-      if( $checker->setupOrderAndPaymentObject( $orderID ) )
-      {
-          $amount   = $checker->getFieldValue( 'mc_gross' );
-          $currency = $checker->getFieldValue( 'mc_currency' );
-          if( $checker->checkAmount( $amount ) && $checker->checkCurrency( $currency ) )
-          {
-              $checker->approvePayment();
-          }
-      }
-  }
+if ($checker->createDataFromPOST()) {
+    unset ($_POST);
+    if ($checker->requestValidation() && $checker->checkPaymentStatus()) {
+        $orderID = $checker->getFieldValue('custom');
+        if ($checker->setupOrderAndPaymentObject($orderID)) {
+            $amount = $checker->getFieldValue('mc_gross');
+            $currency = $checker->getFieldValue('mc_currency');
+            if ($checker->checkAmount($amount) && $checker->checkCurrency($currency)) {
+                $checker->approvePayment();
+            }
+        }
+    }
 }
 
-$logger->writeTimedString( 'notify_url.php was propertly ended' );
+$logger->writeTimedString('notify_url.php was propertly ended');
 
-?>

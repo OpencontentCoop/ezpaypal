@@ -1,16 +1,7 @@
-eZ Paypal Payment Gateway extension [ExtensionVersion] README
-
 What is the eZ Paypal Payment Gateway extension?
 ================================================
 
 Payment gateway for Paypal
-
-
-eZ Paypal Payment Gateway version
-=======================
-
-The current version of eZ Paypal Payment Gateway is [ExtensionVersion].
-You can find details about changes for this version in doc/changelogs/CHANGELOG-[ExtensionVersion]
 
 
 License
@@ -55,23 +46,6 @@ o  eZ publish must be reachable from the internet:
    Make sure you have installed eZ publish on a webserver that is reachable by
    the Paypal service.
 
-
-Troubleshooting
-===============
-
-1. Read the FAQ
-   ------------
-
-   Some problems are more common than others. The most common ones are listed
-   in the the FAQ.
-
-2. Support
-   -------
-
-   If you have find any problems not handled by this document or the FAQ you
-   can contact eZ Systems trough the support system:
-   http://ez.no/support_and_services
-
 Installation
 ============
 Enable this extension, regenerate autoloads, clear cache, create a new "Event/Payment Gateway" workflow, select "paypal", set it as checkout-before trigger. Change paypal.ini settings.
@@ -79,30 +53,28 @@ Enable this extension, regenerate autoloads, clear cache, create a new "Event/Pa
 Paypal Sandbox
 ==============
 
-Create a seller (business) account and a buyer account.
+ - Create a seller (business) account and a buyer account.
 
-Check your biz account and click "Enter sandbox test site".
+ - Check your biz account and click "Enter sandbox test site".
 
-Go to Profile->More options
+ - Go to Profile->More options
 
--Payment Receiving Preferences:
+ - Payment Receiving Preferences:
 
-For "Block payments sent to me in a currency I do not hold", check "No, accept them and convert them to U.S. Dollars".
+   - For "Block payments sent to me in a currency I do not hold", check "No, accept them and convert them to U.S. Dollars".
 
--Instant Payment Notification Preferences
+   - Instant Payment Notification Preferences
 
-For "Notification URL", put http://yoursite.com/paypal/notify_url
-For "IPN messages", check "Receive IPN messages (Enabled)"
+   - For "Notification URL", put http://yoursite.com/paypal/notify_url
+   - For "IPN messages", check "Receive IPN messages (Enabled)"
 
--Website Payment Preferences
+ - Website Payment Preferences
 
-Enable auto return.
-Return URL: http://yoursite.com/shop/checkout
-Payment Data Transfer (optional): On
+   - Enable auto return.
+   - Return URL: http://yoursite.com/shop/checkout
+   - Payment Data Transfer (optional): On
 
--eZ publish settings
-
-In order to test your Paypal you need to change paypal.ini settings:
+ - eZ publish settings: in order to test your Paypal you need to change paypal.ini settings:
 
 Business=your_sandbox_biz_test_account@email.com
 
