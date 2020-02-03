@@ -80,9 +80,10 @@ class eZPaypalGateway extends eZRedirectGateway
 
         $countryCode = urlencode($locale->countryCode());
 
-        $business = urlencode($this->getParameter($order, 'Business'));
-        $maxDescLen = $this->getParameter($order, 'MaxDescriptionLength');
-        $itemName = urlencode($this->createShortDescription($order, $maxDescLen));
+        $business = urlencode($this->getParameter($order, 'Business'));        
+        $orderNbString  = "Ordine N. {$orderID}: ";
+        $maxDescLen = (int)$this->getParameter($order, 'MaxDescriptionLength') - strlen($orderNbString);
+        $itemName = urlencode($orderNbString . $this->createShortDescription($order, $maxDescLen));        
 
         $accountInfo = $order->attribute('account_information');
         $first_name = urlencode($accountInfo['first_name']);
